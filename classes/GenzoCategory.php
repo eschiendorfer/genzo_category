@@ -5,7 +5,6 @@
  *
  * @author    Emanuel Schiendorfer <https://github.com/eschiendorfer>
  * @copyright 2018 Emanuel Schiendorfer
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 namespace GenzoCategoryModule;
@@ -18,7 +17,7 @@ class GenzoCategory extends \ObjectModel {
     public $footer_description;
 
     public static $definition = array(
-        'table'     => "genzo_category_lang",
+        'table'     => 'genzo_category_lang',
         'primary'   => 'id_genzo_category',
         'fields' => array(
             'id_category'        => array('type' => self::TYPE_INT),

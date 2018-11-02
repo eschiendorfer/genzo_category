@@ -5,7 +5,6 @@
  *
  * @author    Emanuel Schiendorfer <https://github.com/eschiendorfer>
  * @copyright 2018 Emanuel Schiendorfer
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
 if (!defined('_PS_VERSION_'))
@@ -17,8 +16,6 @@ use GenzoCategoryModule\GenzoCategory;
 
 class Genzo_Category extends Module
 {
-    // Todo: Change Logo
-
 	function __construct() {
 		$this->name = 'genzo_category';
 		$this->tab = 'front_office_features';
@@ -80,7 +77,7 @@ class Genzo_Category extends Module
 
 	// Backoffice
     public function getContent() {
-        return $this->adminDisplayInformation($this->l('To use this module, you have to add a hook to your template: {hook h=\'DisplayCategoryFooterDescription\'}'));
+        return $this->adminDisplayInformation($this->l('To use this module, you have to add a hook to your template. Add the following to category.tpl: {hook h=\'DisplayCategoryFooterDescription\'}'));
     }
 
     //Hooks
@@ -99,14 +96,12 @@ class Genzo_Category extends Module
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
 	        $id_genzo_category = GenzoCategory::getIdGenzoCategory($id_category, $id_shop, $id_lang);
-
 	        $categoryGenzo = new GenzoCategory($id_genzo_category);
 	        $footer_description = $this->checkShortcode($categoryGenzo->footer_description);
 
             $this->context->smarty->assign(array(
                 'footer_description' => $footer_description,
             ));
-
             return $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
         }
     }
