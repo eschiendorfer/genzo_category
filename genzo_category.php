@@ -99,8 +99,10 @@ class Genzo_Category extends Module
 	        $id_genzo_category = GenzoCategory::getIdGenzoCategory($id_category, $id_shop, $id_lang);
 
 	        $categoryGenzo = new GenzoCategory($id_genzo_category);
+	        $footer_description = $this->checkShortcode($categoryGenzo->footer_description);
+
             $this->context->smarty->assign(array(
-                'footer_description' => $categoryGenzo->footer_description,
+                'footer_description' => $footer_description,
             ));
 
             return $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
@@ -148,6 +150,15 @@ class Genzo_Category extends Module
                 $categoryGenzo->save();
             }
         }
+    }
+
+    // Shortcode
+    private function checkShortcode ($content) {
+        if (file_exists(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php')) {
+            require_once(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php');
+            $content = genzoShortcodes::executeShortcodes($content);
+        }
+        return $content;
     }
 
 }
