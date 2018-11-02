@@ -17,6 +17,8 @@ use GenzoCategoryModule\GenzoCategory;
 
 class Genzo_Category extends Module
 {
+    // Todo: Change Logo
+
 	function __construct() {
 		$this->name = 'genzo_category';
 		$this->tab = 'front_office_features';
