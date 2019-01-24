@@ -8,3 +8,7 @@
 #footer_description a {
     text-decoration: underline;
 }
+
+#footer_description ul {
+    list-style-type: square;
+}
