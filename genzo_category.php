@@ -19,7 +19,7 @@ class Genzo_Category extends Module
 	function __construct() {
 		$this->name = 'genzo_category';
 		$this->tab = 'front_office_features';
-		$this->version = '1.0.0';
+		$this->version = '1.1.0';
 		$this->author = 'Emanuel Schiendorfer';
 		$this->need_instance = 0;
 
@@ -88,20 +88,21 @@ class Genzo_Category extends Module
 
     public function hookDisplayCategoryFooterDescription () {
 	    
-	    if(Tools::getValue('controller')!='category') {
+	    if (Tools::getValue('controller')!='category') {
 	        return null;
         }
         else {
 	        $id_category = Tools::getValue('id_category');
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
-	        $id_genzo_category = GenzoCategory::getIdGenzoCategory($id_category, $id_shop, $id_lang);
-	        $categoryGenzo = new GenzoCategory($id_genzo_category);
+
+	        $categoryGenzo = new GenzoCategory($id_category, $id_lang, $id_shop);
 	        $footer_description = $this->checkShortcode($categoryGenzo->footer_description);
 
             $this->context->smarty->assign(array(
                 'footer_description' => $footer_description,
             ));
+
             return $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
         }
     }
@@ -125,28 +126,24 @@ class Genzo_Category extends Module
         // Get Values
         $id_category = Tools::getValue('id_category');
         $id_shop = $this->context->shop->id;
-        $values = GenzoCategory::getBackofficeData($id_category, $id_shop);
-        $params['fields_value']['footer_description'] = $values;
+
+        $categoryGenzo = new GenzoCategory($id_category, null, $id_shop);
+
+        $params['fields_value']['footer_description'] = $categoryGenzo->footer_description;
     }
 
     public function hookActionAdminCategoriesControllerSaveAfter($params) {
 
         $id_category = (int)Tools::getValue('id_category');
 
-        $shops = Shop::getContextListShopID();
-        $languages = Language::getIDs();
+        $categoryGenzo = new GenzoCategory($id_category);
+        $categoryGenzo->id_category = $id_category;
 
-        foreach ($shops as $id_shop) {
-            foreach ($languages as $id_lang) {
-                $id_genzo_category = GenzoCategory::getIdGenzoCategory($id_category, $id_shop, $id_lang);
-                $categoryGenzo = new GenzoCategory($id_genzo_category);
-                $categoryGenzo->id_category = $id_category;
-                $categoryGenzo->id_shop = (int)$id_shop;
-                $categoryGenzo->id_lang = (int)$id_lang;
-                $categoryGenzo->footer_description = Tools::getValue('footer_description_'.$id_lang);
-                $categoryGenzo->save();
-            }
+        foreach (Language::getIDs() as $id_lang) {
+            $categoryGenzo->footer_description[$id_lang] = Tools::getValue('footer_description_' . $id_lang);
         }
+
+        $categoryGenzo->save();
     }
 
     // Shortcode

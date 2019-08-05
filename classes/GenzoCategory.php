@@ -17,41 +17,13 @@ class GenzoCategory extends \ObjectModel {
     public $footer_description;
 
     public static $definition = array(
-        'table'     => 'genzo_category_lang',
-        'primary'   => 'id_genzo_category',
+        'table'     => 'genzo_category',
+        'primary'   => 'id_category',
+        'multilang'      => true,
+        'multilang_shop' => true,
         'fields' => array(
             'id_category'        => array('type' => self::TYPE_INT),
-            'id_shop'            => array('type' => self::TYPE_INT),
-            'id_lang'            => array('type' => self::TYPE_INT),
-            'footer_description' => array('type' => self::TYPE_HTML),
+            'footer_description' => array('type' => self::TYPE_HTML, 'lang' => true),
         )
     );
-
-    public static function getIdGenzoCategory($id_category, $id_shop, $id_lang) {
-        $query = new \DbQuery();
-        $query->select('id_genzo_category');
-        $query->from(self::$definition['table']);
-        $query->where('id_category = ' . (int)$id_category);
-        $query->where('id_shop = ' . (int)$id_shop);
-        $query->where('id_lang = ' . (int)$id_lang);
-        return \Db::getInstance()->getValue($query);
-    }
-
-    public static function getBackofficeData($id_category, $id_shop) {
-
-        $languages = \Language::getIDs();
-
-        foreach ($languages as $id_lang) {
-            $query = new \DbQuery();
-            $query->select('footer_description');
-            $query->from(self::$definition['table']);
-            $query->where('id_category = ' . (int)$id_category);
-            $query->where('id_shop = ' . (int)$id_shop);
-            $query->where('id_lang = ' . (int)$id_lang);
-            $values[$id_lang] = \Db::getInstance()->getValue($query);
-        }
-
-        return $values;
-    }
-    
 }
