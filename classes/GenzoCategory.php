@@ -12,17 +12,17 @@ namespace GenzoCategoryModule;
 class GenzoCategory extends \ObjectModel {
 
     public $id_category;
-    public $id_shop;
     public $id_lang;
     public $footer_description;
+    public $fakii;
 
     public static $definition = array(
         'table'     => 'genzo_category',
         'primary'   => 'id_category',
         'multilang'      => true,
-        'multilang_shop' => true,
         'fields' => array(
             'id_category'        => array('type' => self::TYPE_INT),
+            'fakii' => array('type' => self::TYPE_BOOL),
             'footer_description' => array('type' => self::TYPE_HTML, 'lang' => true),
         )
     );

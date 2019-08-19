@@ -137,13 +137,20 @@ class Genzo_Category extends Module
         $id_category = (int)Tools::getValue('id_category');
 
         $categoryGenzo = new GenzoCategory($id_category);
+        //$categoryGenzo->force_id = true;
+        //$categoryGenzo->id = $id_category;
         $categoryGenzo->id_category = $id_category;
+        $categoryGenzo->fakii = true;
 
         foreach (Language::getIDs() as $id_lang) {
-            $categoryGenzo->footer_description[$id_lang] = Tools::getValue('footer_description_' . $id_lang);
+            //$categoryGenzo->footer_description[$id_lang] = Tools::getValue('footer_description_' . $id_lang);
         }
 
+        print_r($categoryGenzo);
+
         $categoryGenzo->save();
+
+        die();
     }
 
     // Shortcode
