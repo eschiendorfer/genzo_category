@@ -97,13 +97,6 @@ class Genzo_Category extends Module
 	        $id_lang = $this->context->language->id_lang;
 
 	        $categoryGenzo = new GenzoCategory($id_category, $id_lang, $id_shop);
-
-	        print_r('test');
-	        print_r($id_category.'<br>');
-	        print_r($id_shop.'<br>');
-	        print_r($id_lang.'<br>');
-	        print_r($categoryGenzo->footer_description);
-
 	        $footer_description = $this->checkShortcode($categoryGenzo->footer_description);
 
             $this->context->smarty->assign(array(
