@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS `PREFIX_genzo_category_lang` (
   `id_shop` INT(12) NOT NULL,
   `id_lang` INT(12) NOT NULL,
   `footer_description` VARCHAR(100000) NOT NULL,
-  PRIMARY KEY ( `id_category` )
+  PRIMARY KEY (`id_category`,`id_shop`,`id_lang`)
 ) ENGINE=ENGINE_TYPE DEFAULT CHARSET=CHARSET_TYPE;
