@@ -14,14 +14,12 @@ class GenzoCategory extends \ObjectModel {
     public $id_category;
     public $id_lang;
     public $footer_description;
-    public $faki;
 
     public static $definition = array(
         'table'     => 'genzo_category',
         'primary'   => 'id_category',
         'multilang'      => true,
         'fields' => array(
-            'id_category'        => array('type' => self::TYPE_INT),
             'footer_description' => array('type' => self::TYPE_HTML, 'lang' => true),
         )
     );
