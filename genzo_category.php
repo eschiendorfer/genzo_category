@@ -138,8 +138,6 @@ class Genzo_Category extends Module
 
         // This strange way seems to be the only to save a not auto_increment object model with _lang table
         $categoryGenzo = new GenzoCategory($id_category);
-        $categoryGenzo->force_id = true;
-        $categoryGenzo->id_category = $id_category;
 
         foreach (Language::getIDs() as $id_lang) {
             $categoryGenzo->footer_description[$id_lang] = Tools::getValue('footer_description_' . $id_lang);

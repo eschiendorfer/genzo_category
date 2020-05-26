@@ -18,6 +18,7 @@ class GenzoCategory extends \ObjectModel {
     public static $definition = array(
         'table'     => 'genzo_category',
         'primary'   => 'id_category',
+        'auto_increment' => false,
         'multilang'      => true,
         'fields' => array(
             'footer_description' => array('type' => self::TYPE_HTML, 'lang' => true),
