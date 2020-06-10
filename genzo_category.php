@@ -108,28 +108,29 @@ class Genzo_Category extends Module
     }
 
     public function hookActionAdminCategoriesFormModifier($params) {
+        if ($id_category = Tools::getValue('id_category')) {
 
-        $count = count($params['fields']);
+            $count = count($params['fields']);
 
-        // New Fields
-        $params['fields'][$count]['form']['legend']['title'] = $this->name;
-        $params['fields'][$count]['form']['submit']['title'] = $this->l('Save');
+            // New Fields
+            $params['fields'][$count]['form']['legend']['title'] = $this->name;
+            $params['fields'][$count]['form']['submit']['title'] = $this->l('Save');
 
-        $params['fields'][$count]['form']['input']['footer_description'] = array(
-            'type'   => 'textarea',
-            'autoload_rte' => true,
-            'label'  => $this->l('Footer description'),
-            'name'   => 'footer_description',
-            'lang' => true,
-        );
+            $params['fields'][$count]['form']['input']['footer_description'] = array(
+                'type'   => 'textarea',
+                'autoload_rte' => true,
+                'label'  => $this->l('Footer description'),
+                'name'   => 'footer_description',
+                'lang' => true,
+            );
 
-        // Get Values
-        $id_category = Tools::getValue('id_category');
-        $id_shop = $this->context->shop->id;
+            // Get Values
+            $id_shop = $this->context->shop->id;
 
-        $categoryGenzo = new GenzoCategory($id_category, null, $id_shop);
+            $categoryGenzo = new GenzoCategory($id_category, null, $id_shop);
 
-        $params['fields_value']['footer_description'] = $categoryGenzo->footer_description;
+            $params['fields_value']['footer_description'] = $categoryGenzo->footer_description;
+        }
     }
 
     public function hookActionAdminCategoriesControllerSaveAfter($params) {
