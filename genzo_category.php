@@ -10,7 +10,7 @@
 if (!defined('_PS_VERSION_'))
 	exit;
 
-require_once _PS_MODULE_DIR_ . 'genzo_category/classes/GenzoCategory.php';
+include_once _PS_MODULE_DIR_ . 'genzo_category/classes/GenzoCategory.php';
 
 use GenzoCategoryModule\GenzoCategory;
 
@@ -87,7 +87,7 @@ class Genzo_Category extends Module
     }
 
     public function hookDisplayCategoryFooterDescription () {
-	    
+
 	    if (Tools::getValue('controller')!='category') {
 	        return null;
         }
@@ -149,8 +149,8 @@ class Genzo_Category extends Module
 
     // Shortcode
     private function checkShortcode ($content) {
-        if (file_exists(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php')) {
-            require_once(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php');
+       if (file_exists(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php')) {
+            include_once(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php');
             $content = genzoShortcodes::executeShortcodes($content);
         }
         return $content;
