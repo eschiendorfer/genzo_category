@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Copyright (C) 2018 Emanuel Schiendorfer
+ * Copyright (C) 2022 Emanuel Schiendorfer
  *
  * @author    Emanuel Schiendorfer <https://github.com/eschiendorfer>
- * @copyright 2018 Emanuel Schiendorfer
+ * @copyright 2022 Emanuel Schiendorfer
  */
 
 if (!defined('_PS_VERSION_'))
@@ -19,7 +19,7 @@ class Genzo_Category extends Module
 	function __construct() {
 		$this->name = 'genzo_category';
 		$this->tab = 'front_office_features';
-		$this->version = '1.1.1';
+		$this->version = '2.0.0';
 		$this->author = 'Emanuel Schiendorfer';
 		$this->need_instance = 0;
 
@@ -77,6 +77,32 @@ class Genzo_Category extends Module
 
 	// Backoffice
     public function getContent() {
+
+        $id_primary = 776;
+        $id_lang = null;
+        $id_shop = null;
+
+
+        $genzoCategory = new \GenzoCategoryModule\GenzoCategory($id_primary, $id_lang, $id_shop);
+        // $genzoCategory->delete();
+
+        // return;
+
+        $genzoCategory->footer_description = "id_lang:{$id_lang} id_shop:{$id_shop} ".rand(0,100);
+        $genzoCategory->save();
+
+        // sleep(5);
+
+        $genzoCategory = new \GenzoCategoryModule\GenzoCategory(776, 2, 2);
+        $genzoCategory->footer_description = 'id_lang:2 id_shop:2';
+        // $genzoCategory->save();
+
+        // sleep(5);
+
+        $genzoCategory = new \GenzoCategoryModule\GenzoCategory(776, 2, 3);
+        $genzoCategory->footer_description = 'id_lang:2 id_shop:3';
+        // $genzoCategory->save();
+
         return $this->adminDisplayInformation($this->l('To use this module, you have to add a hook to your template. Add the following to category.tpl: {hook h=\'DisplayCategoryFooterDescription\'}'));
     }
 

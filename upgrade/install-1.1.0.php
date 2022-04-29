@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @var genzo_krona $module
+ * @var genzo_category $module
  * @return bool
  * @throws PrestaShopException
  */
