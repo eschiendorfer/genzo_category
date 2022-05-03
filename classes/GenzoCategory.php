@@ -27,7 +27,7 @@ class GenzoCategory extends \ObjectModel {
     );
 
     public function __construct($id_category = null, $idLang = null, $id_shop = null) {
-        $id_category_helper = self::getIdCategoryHelper($id_category);
+        $id_category_helper = $id_category ? self::getIdCategoryHelper($id_category) : null;
         parent::__construct($id_category_helper, $idLang, $id_shop);
         $this->id_category = $id_category;
     }

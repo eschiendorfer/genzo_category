@@ -25,6 +25,11 @@ class Genzo_Category extends Module
 
 		$this->bootstrap = true;
 
+        // Make sure, that core knows all the shop table relations
+        if (Shop::isFeatureActive()) {
+            Shop::addTableAssociation('genzo_category_lang', array('type' => 'fk_shop'));
+        }
+
 	 	parent::__construct();
 
 		$this->displayName = $this->l('Genzo Category');
@@ -37,7 +42,7 @@ class Genzo_Category extends Module
 		if (!parent::install() OR
 			!$this->executeSqlScript('install') OR
             !$this->registerHook('displayHeader') OR
-            !$this->registerHook('displayCategoryFooterDescription') OR
+            !$this->registerHook('displayFooter') OR
             !$this->registerHook('actionAdminCategoriesFormModifier') OR
             !$this->registerHook('actionAdminCategoriesControllerSaveAfter')
         )
@@ -78,32 +83,76 @@ class Genzo_Category extends Module
 	// Backoffice
     public function getContent() {
 
-        $id_primary = 776;
-        $id_lang = null;
-        $id_shop = null;
+        $confirmation = '';
 
+        if (Tools::isSubmit('saveGenzoCategory')) {
+            $this->processForm();
+            $confirmation = $this->displayConfirmation($this->l('Configuration was saved!'));
+        }
 
-        $genzoCategory = new \GenzoCategoryModule\GenzoCategory($id_primary, $id_lang, $id_shop);
-        // $genzoCategory->delete();
+        return $confirmation.$this->renderForm();
 
-        // return;
+    }
 
-        $genzoCategory->footer_description = "id_lang:{$id_lang} id_shop:{$id_shop} ".rand(0,100);
-        $genzoCategory->save();
+    private function renderForm() {
 
-        // sleep(5);
+        $inputs[] = array(
+            'type' => 'switch',
+            'label' => $this->l('Custom Hook'),
+            'name' => 'custom_hook',
+            'values' => array(
+                array(
+                    'id' => 'active_on',
+                    'value' => 1,
+                    'label' => $this->l('Yes')
+                ),
+                array(
+                    'id' => 'active_off',
+                    'value' => 0,
+                    'label' => $this->l('No')
+                )
+            ),
+            'desc' => 'If yes, you have to add a {hook h=\'DisplayCategoryFooterDescription\'} to category.tpl in your template. Otherwise the default displayFooter hook is used.'
+        );
 
-        $genzoCategory = new \GenzoCategoryModule\GenzoCategory(776, 2, 2);
-        $genzoCategory->footer_description = 'id_lang:2 id_shop:2';
-        // $genzoCategory->save();
+        $fields_form = array(
+            'form' => array(
+                'legend' => array(
+                    'title' =>$this->l('Configuration'),
+                    'icon' => 'icon-cogs',
+                ),
+                'input' => $inputs,
+                'submit' => array(
+                    'title' => $this->l('Save Setting'),
+                    'class' => 'btn btn-default pull-right',
+                    'name' => 'saveGenzoCategory',
+                ),
+            )
+        );
 
-        // sleep(5);
+        $helper = new HelperForm();
+        $helper->show_toolbar = false;
+        $helper->tpl_vars = [
+            'fields_value' => ['custom_hook' => (int)Configuration::get('GENZO_CATEGORY_HOOK_CUSTOM')],
+        ];
 
-        $genzoCategory = new \GenzoCategoryModule\GenzoCategory(776, 2, 3);
-        $genzoCategory->footer_description = 'id_lang:2 id_shop:3';
-        // $genzoCategory->save();
+        return $helper->generateForm([$fields_form]);
+    }
 
-        return $this->adminDisplayInformation($this->l('To use this module, you have to add a hook to your template. Add the following to category.tpl: {hook h=\'DisplayCategoryFooterDescription\'}'));
+    private function processForm() {
+
+        $custom_hook = (bool)Tools::getValue('custom_hook');
+        Configuration::updateGlobalValue('GENZO_CATEGORY_HOOK_CUSTOM', $custom_hook);
+
+        if ($custom_hook) {
+            $this->unregisterHook('displayFooter');
+            $this->registerHook('displayCategoryFooterDescription');
+        }
+        else {
+            $this->registerHook('displayFooter');
+            $this->unregisterHook('displayCategoryFooterDescription');
+        }
+
     }
 
     //Hooks
@@ -112,7 +161,15 @@ class Genzo_Category extends Module
         $this->context->controller->addCSS($this->_path.'/views/css/genzo_category.css');
     }
 
-    public function hookDisplayCategoryFooterDescription () {
+    public function hookDisplayCategoryFooterDescription() {
+        return $this->renderHookContent();
+    }
+
+    public function hookDisplayFooter() {
+        return $this->renderHookContent();
+    }
+
+    public function renderHookContent() {
 
 	    if (Tools::getValue('controller')!='category') {
 	        return null;
@@ -122,8 +179,8 @@ class Genzo_Category extends Module
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
 
-	        $categoryGenzo = new GenzoCategory($id_category, $id_lang, $id_shop);
-	        $footer_description = $this->checkShortcode($categoryGenzo->footer_description);
+	        $genzoCategory = new GenzoCategory($id_category, $id_lang, $id_shop);
+	        $footer_description = $this->checkShortcode($genzoCategory->footer_description);
 
             $this->context->smarty->assign(array(
                 'footer_description' => $footer_description,
@@ -134,6 +191,7 @@ class Genzo_Category extends Module
     }
 
     public function hookActionAdminCategoriesFormModifier($params) {
+
         if ($id_category = Tools::getValue('id_category')) {
 
             $count = count($params['fields']);
@@ -154,8 +212,18 @@ class Genzo_Category extends Module
             $id_shop = $this->context->shop->id;
 
             $categoryGenzo = new GenzoCategory($id_category, null, $id_shop);
+            $footer_description = [];
 
-            $params['fields_value']['footer_description'] = $categoryGenzo->footer_description;
+            if (is_array($categoryGenzo->footer_description) && !empty($categoryGenzo->footer_description)) {
+                $footer_description = $categoryGenzo->footer_description;
+            }
+            else {
+                foreach (Language::getIDs() as $id_lang) {
+                    $footer_description[$id_lang] = '';
+                }
+            }
+
+            $params['fields_value']['footer_description'] = $footer_description;
         }
     }
 
