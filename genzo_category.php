@@ -42,7 +42,7 @@ class Genzo_Category extends Module
 		if (!parent::install() OR
 			!$this->executeSqlScript('install') OR
             !$this->registerHook('displayHeader') OR
-            !$this->registerHook('displayFooter') OR
+            !$this->registerHook('displayBottomColumn') OR
             !$this->registerHook('actionAdminCategoriesFormModifier') OR
             !$this->registerHook('actionAdminCategoriesControllerSaveAfter')
         )
@@ -145,11 +145,11 @@ class Genzo_Category extends Module
         Configuration::updateGlobalValue('GENZO_CATEGORY_HOOK_CUSTOM', $custom_hook);
 
         if ($custom_hook) {
-            $this->unregisterHook('displayFooter');
+            $this->unregisterHook('displayBottomColumn');
             $this->registerHook('displayCategoryFooterDescription');
         }
         else {
-            $this->registerHook('displayFooter');
+            $this->registerHook('displayBottomColumn');
             $this->unregisterHook('displayCategoryFooterDescription');
         }
 
@@ -165,7 +165,7 @@ class Genzo_Category extends Module
         return $this->renderHookContent();
     }
 
-    public function hookDisplayFooter() {
+    public function hookDisplayBottomColumn() {
         return $this->renderHookContent();
     }
 
