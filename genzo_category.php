@@ -42,7 +42,7 @@ class Genzo_Category extends Module
 		if (!parent::install() OR
 			!$this->executeSqlScript('install') OR
             !$this->registerHook('displayHeader') OR
-            !$this->registerHook('displayBottomColumn') OR
+            !$this->registerHook('displayTabContent') OR
             !$this->registerHook('actionAdminCategoriesFormModifier') OR
             !$this->registerHook('actionAdminCategoriesControllerSaveAfter')
         )
@@ -165,8 +165,21 @@ class Genzo_Category extends Module
         return $this->renderHookContent();
     }
 
-    public function hookDisplayBottomColumn() {
-        return $this->renderHookContent();
+    public function hookDisplayTabContent($params) {
+
+        if ($content = $this->renderHookContent()) {
+            return ['displayBottomColumn' => [
+                    [
+                        'title' => $this->l('Customer Advise'),
+                        'content' => $content,
+                        'display' => true,
+                    ]
+                ]
+            ];
+        }
+
+        return null;
+
     }
 
     public function renderHookContent() {
