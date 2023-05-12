@@ -256,9 +256,9 @@ class Genzo_Category extends Module
 
     // Shortcode
     private function checkShortcode ($content) {
-       if (file_exists(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php')) {
-            include_once(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes_include.php');
-            $content = genzoShortcodes::executeShortcodes($content);
+       if (file_exists(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes.php')) {
+            include_once(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes.php');
+            $content = Genzo_Shortcodes::executeShortcodes($content);
         }
         return $content;
     }
