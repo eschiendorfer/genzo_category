@@ -1,13 +1,12 @@
-#footer_description {
-    padding: 20px;
-    font-size: 12.5px;
-    box-sizing: border-box;
-}
-
 #footer_description a {
     text-decoration: underline;
 }
 
 #footer_description ul {
     list-style-type: square;
+}
+
+#footer_description > :first-child {
+    margin-top: 0!important;
+    padding-top: 0!important;
 }
