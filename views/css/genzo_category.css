@@ -1,3 +1,7 @@
+#footer_description {
+    padding: 10px;
+}
+
 #footer_description a {
     text-decoration: underline;
 }

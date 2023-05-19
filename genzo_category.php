@@ -188,7 +188,7 @@ class Genzo_Category extends Module
 	        return null;
         }
         else {
-	        $id_category = Tools::getValue('id_category');
+	        $id_category = (int)Tools::getValue('id_category');
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
 
