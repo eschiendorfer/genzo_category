@@ -23,7 +23,16 @@ class GenzoCategory extends \ObjectModel {
         'fields' => array(
             'id_category'        => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
             'footer_description' => array('type' => self::TYPE_HTML, 'lang' => true),
-        )
+        ),
+        'images' => [
+            'genzocategoryfooter' => [
+                'inputName' => 'genzocategoryfooter',
+                'path' => _PS_IMG_DIR_.'genzo_category/footer/',
+                'imageTypes' => [
+                    ['name' => 'genzo_category_footer', 'width' => 600, 'height' => 600],
+                ]
+            ]
+        ]
     );
 
     public function __construct($id_category = null, $idLang = null, $id_shop = null) {

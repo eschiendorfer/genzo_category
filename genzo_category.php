@@ -184,10 +184,8 @@ class Genzo_Category extends Module
 
     public function renderHookContent() {
 
-	    if (Tools::getValue('controller')!='category') {
-	        return null;
-        }
-        else {
+	    if (Tools::getValue('controller')=='category') {
+
 	        $id_category = (int)Tools::getValue('id_category');
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
@@ -195,12 +193,18 @@ class Genzo_Category extends Module
 	        $genzoCategory = new GenzoCategory($id_category, $id_lang, $id_shop);
 	        $footer_description = $this->checkShortcode($genzoCategory->footer_description);
 
+            $extension = ImageManager::getDefaultImageExtension();
+            $srcPathImage = GenzoCategory::$definition['images']['genzocategoryfooter']['path'].$genzoCategory->id_category.'.'.$extension;
+
             $this->context->smarty->assign(array(
                 'footer_description' => $footer_description,
+                'footer_image' => file_exists($srcPathImage) ? $this->context->link->getGenericImageLink('genzocategoryfooter', $genzoCategory->id_category, 'genzo_category_footer') : '',
             ));
 
             return $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
         }
+
+        return '';
     }
 
     public function hookActionAdminCategoriesFormModifier($params) {
@@ -219,6 +223,14 @@ class Genzo_Category extends Module
                 'label'  => $this->l('Footer description'),
                 'name'   => 'footer_description',
                 'lang' => true,
+            );
+
+            ImageEntity::rebuildImageEntities('GenzoCategoryModule\GenzoCategory', GenzoCategory::$definition['images']);
+
+            $params['fields'][$count]['form']['input']['genzocategoryfooter'] = array(
+                'type'   => 'file',
+                'label'  => $this->l('Image'),
+                'name'   => 'genzocategoryfooter',
             );
 
             // Get Values
@@ -252,10 +264,32 @@ class Genzo_Category extends Module
         }
 
         $categoryGenzo->save();
+
+        // Saving Images (this doesn't work out of the box as we don't have a custom controller)
+        $imageExtension = ImageManager::getDefaultImageExtension();
+        $id = $categoryGenzo->id_category;
+
+        foreach (GenzoCategory::$definition['images'] as $imageEntityName => $imageEntity) {
+
+            $path = $imageEntity['path'];
+
+            if (!empty($_FILES[$imageEntityName]) && ($tmpName = $_FILES[$imageEntityName]['tmp_name'])) {
+                ImageManager::convertImageToExtension($tmpName, $imageExtension, $path.$id.'.'.$imageExtension);
+            }
+
+            if (!empty($imageEntity['imageTypes'])) {
+                foreach ($imageEntity['imageTypes'] as $imageType) {
+                    ImageManager::resize($imageEntity['path'].$id.'.'.$imageExtension, $path.$id.'-'.$imageType['name'].'.'.$imageExtension, $imageType['width'], $imageType['height'], $imageExtension);
+                    if (ImageManager::retinaSupport()) {
+                        ImageManager::resize($path.$id.'.'.$imageExtension, $path.$id.'-'.$imageType['name'].'2x.'.$imageExtension, $imageType['width'] * 2, $imageType['height'] * 2, $imageExtension);
+                    }
+                }
+            }
+        }
     }
 
     // Shortcode
-    private function checkShortcode ($content) {
+    private function checkShortcode($content) {
        if (file_exists(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes.php')) {
             include_once(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes.php');
             $content = Genzo_Shortcodes::executeShortcodes($content);
