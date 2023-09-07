@@ -1,6 +1,6 @@
 {if isset($footer_description) && !empty($footer_description)}
     <div class="flex justify-between gap-10">
-        <div id="footer_description" class="max-w-prose text-sm">
+        <div id="footer_description" class="article max-w-prose text-sm">
             {$footer_description}
         </div>
         {if $footer_image}
