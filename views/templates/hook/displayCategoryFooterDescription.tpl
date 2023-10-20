@@ -4,7 +4,7 @@
             {$footer_description}
         </div>
         {if $footer_image}
-            <div class="flex-grow max-w-[600px] max-h-[600px] bg-cover bg-no-repeat bg-center -my-8 -mr-8" style="background-image: url({$footer_image});"></div>
+            <div class="flex-grow max-w-[600px] max-h-[600px] bg-contain bg-right-top bg-no-repeat bg-center -my-8 -mr-8" style="background-image: url({$footer_image});"></div>
         {/if}
     </div>
 {/if}
