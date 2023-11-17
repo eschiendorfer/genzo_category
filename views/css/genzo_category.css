@@ -2,3 +2,13 @@
     margin-top: 0!important;
     padding-top: 0!important;
 }
+
+#footer_description h2 {
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.75rem; /* 28px */
+}
+
+#footer_description h3 {
+    font-size: 1rem; /* 16px */
+    line-height: 1.5rem; /* 24px */
+}
