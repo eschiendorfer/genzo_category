@@ -190,6 +190,14 @@ class Genzo_Category extends Module
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
 
+            // Check if cache is available
+            $cache = Cache::getInstance();
+            $renderCategoryFooterDescriptionCacheKey = "renderCategoryFooterDescription|{$id_category}|{$id_lang}";
+
+            if ($cachedContent = $cache->get($renderCategoryFooterDescriptionCacheKey)) {
+                return $cachedContent;
+            }
+
 	        $genzoCategory = new GenzoCategory($id_category, $id_lang, $id_shop);
 	        $footer_description = $this->checkShortcode($genzoCategory->footer_description);
 
@@ -201,7 +209,11 @@ class Genzo_Category extends Module
                 'footer_image' => file_exists($srcPathImage) ? $this->context->link->getGenericImageLink('genzocategoryfooter', $genzoCategory->id_category, 'genzo_category_footer') : '',
             ));
 
-            return $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
+            $htmlContent = $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
+
+            $cache->set($renderCategoryFooterDescriptionCacheKey, $htmlContent, SpielezarHelper::CACHE_TTL_1_WEEK);
+
+            return $htmlContent;
         }
 
         return '';
@@ -264,6 +276,13 @@ class Genzo_Category extends Module
         }
 
         $categoryGenzo->save();
+
+        // Delete cache of footerDescription
+        $cache = Cache::getInstance();
+        foreach (Language::getIDs() as $id_lang) {
+            $renderCategoryFooterDescriptionCacheKey = "renderCategoryFooterDescription|{$id_category}|{$id_lang}";
+            $cache->delete($renderCategoryFooterDescriptionCacheKey);
+        }
 
         // Saving Images (this doesn't work out of the box as we don't have a custom controller)
         $imageExtension = ImageManager::getDefaultImageExtension();
