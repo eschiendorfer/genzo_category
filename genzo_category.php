@@ -191,10 +191,10 @@ class Genzo_Category extends Module
 	        $id_lang = $this->context->language->id_lang;
 
             // Check if cache is available
-            $cache = Cache::getInstance();
+            $cacheInstance = Cache::isEnabled() ? Cache::getInstance() : false;
             $renderCategoryFooterDescriptionCacheKey = "renderCategoryFooterDescription|{$id_category}|{$id_lang}";
 
-            if ($cachedContent = $cache->get($renderCategoryFooterDescriptionCacheKey)) {
+            if ($cacheInstance && ($cachedContent = $cacheInstance->get($renderCategoryFooterDescriptionCacheKey))) {
                 return $cachedContent;
             }
 
@@ -211,7 +211,9 @@ class Genzo_Category extends Module
 
             $htmlContent = $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
 
-            $cache->set($renderCategoryFooterDescriptionCacheKey, $htmlContent, SpielezarHelper::CACHE_TTL_1_WEEK);
+            if ($cacheInstance) {
+                $cacheInstance->set($renderCategoryFooterDescriptionCacheKey, $htmlContent, SpielezarHelper::CACHE_TTL_1_WEEK);
+            }
 
             return $htmlContent;
         }
@@ -278,10 +280,13 @@ class Genzo_Category extends Module
         $categoryGenzo->save();
 
         // Delete cache of footerDescription
-        $cache = Cache::getInstance();
-        foreach (Language::getIDs() as $id_lang) {
-            $renderCategoryFooterDescriptionCacheKey = "renderCategoryFooterDescription|{$id_category}|{$id_lang}";
-            $cache->delete($renderCategoryFooterDescriptionCacheKey);
+        $cacheInstance = Cache::isEnabled() ? Cache::getInstance() : false;
+
+        if ($cacheInstance) {
+            foreach (Language::getIDs() as $id_lang) {
+                $renderCategoryFooterDescriptionCacheKey = "renderCategoryFooterDescription|{$id_category}|{$id_lang}";
+                $cacheInstance->delete($renderCategoryFooterDescriptionCacheKey);
+            }
         }
 
         // Saving Images (this doesn't work out of the box as we don't have a custom controller)
