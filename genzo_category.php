@@ -190,12 +190,21 @@ class Genzo_Category extends Module
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
 
-            // Check if cache is available
-            $cacheInstance = Cache::isEnabled() ? Cache::getInstance() : false;
-            $renderCategoryFooterDescriptionCacheKey = "renderCategoryFooterDescription|{$id_category}|{$id_lang}";
+            // We check if genzo_theme_configurator is there -> just to make to open source module not breaking on other shops
+            if (Module::isEnabled('genzo_theme_configurator')) {
+                // Check if cache is available
+                $cacheKeyParameters = [
+                    'idLang'     => $id_lang,
+                    'idShop'     => $id_shop,
+                    'entityType' => \CoreExtension\EntityTypeEnum::CATEGORY->value,
+                    'entityId'   => $id_category,
+                ];
 
-            if ($cacheInstance && ($cachedContent = $cacheInstance->get($renderCategoryFooterDescriptionCacheKey))) {
-                return $cachedContent;
+                $cachedValue = \CoreExtension\CacheService::getCacheValue(\CoreExtension\CacheKeysEnum::CATEGORY_FOOTER_DESCRIPTION, $cacheKeyParameters);
+
+                if ($cachedValue) {
+                    return $cachedValue;
+                }
             }
 
 	        $genzoCategory = new GenzoCategory($id_category, $id_lang, $id_shop);
@@ -211,8 +220,9 @@ class Genzo_Category extends Module
 
             $htmlContent = $this->display(__FILE__, 'views/templates/hook/displayCategoryFooterDescription.tpl');
 
-            if ($cacheInstance) {
-                $cacheInstance->set($renderCategoryFooterDescriptionCacheKey, $htmlContent, SpielezarHelper::CACHE_TTL_1_WEEK);
+            // We check if genzo_theme_configurator is there -> just to make to open source module not breaking on other shops
+            if (Module::isEnabled('genzo_theme_configurator')) {
+                \CoreExtension\CacheService::setCacheValue(\CoreExtension\CacheKeysEnum::CATEGORY_FOOTER_DESCRIPTION, $htmlContent, $cacheKeyParameters);
             }
 
             return $htmlContent;
@@ -280,13 +290,9 @@ class Genzo_Category extends Module
         $categoryGenzo->save();
 
         // Delete cache of footerDescription
-        $cacheInstance = Cache::isEnabled() ? Cache::getInstance() : false;
-
-        if ($cacheInstance) {
-            foreach (Language::getIDs() as $id_lang) {
-                $renderCategoryFooterDescriptionCacheKey = "renderCategoryFooterDescription|{$id_category}|{$id_lang}";
-                $cacheInstance->delete($renderCategoryFooterDescriptionCacheKey);
-            }
+        // We check if genzo_theme_configurator is there -> just to make to open source module not breaking on other shops
+        if (Module::isEnabled('genzo_theme_configurator')) {
+            \CoreExtension\CacheService::deleteCacheByTriggerEntityObject($categoryGenzo);
         }
 
         // Saving Images (this doesn't work out of the box as we don't have a custom controller)

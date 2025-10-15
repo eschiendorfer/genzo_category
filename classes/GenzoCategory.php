@@ -9,6 +9,8 @@
 
 namespace GenzoCategoryModule;
 
+// Todo: this module became pretty senseless due to core changes -> we only need it for the images, but in genereal it would be more in line to call it CategoryExtension
+
 class GenzoCategory extends \ObjectModel {
 
     public $id_category_helper;
