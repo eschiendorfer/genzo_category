@@ -43,12 +43,21 @@ class Genzo_Category extends Module
 			!$this->executeSqlScript('install') OR
             !$this->registerHook('displayHeader') OR
             !$this->registerHook('displayTabContent') OR
+            !$this->registerHook('actionRegisterAutoloader') OR
             !$this->registerHook('actionAdminCategoriesFormModifier') OR
             !$this->registerHook('actionAdminCategoriesControllerSaveAfter')
         )
 			return false;
 		return true;
 	}
+
+    public function hookActionRegisterAutoloader(array $params = [])
+    {
+        $classFile = __DIR__ . '/classes/GenzoCategory.php';
+        if (!class_exists(\GenzoCategoryModule\GenzoCategory::class, false) && is_file($classFile)) {
+            require_once $classFile;
+        }
+    }
 
 	public function uninstall() {
 		if (!parent::uninstall() OR
