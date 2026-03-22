@@ -13,6 +13,7 @@ if (!defined('_PS_VERSION_'))
 include_once _PS_MODULE_DIR_ . 'genzo_category/classes/GenzoCategory.php';
 
 use GenzoCategoryModule\GenzoCategory;
+use CoreExtension\EntityTypeEnum;
 
 class Genzo_Category extends Module
 {
@@ -193,9 +194,14 @@ class Genzo_Category extends Module
 
     public function renderHookContent() {
 
-	    if (Tools::getValue('controller')=='category') {
+        $entityContext = \EntityResolver::getEntityByContext();
 
-	        $id_category = (int)Tools::getValue('id_category');
+	    if ($entityContext->entity_type == EntityTypeEnum::CATEGORY->value) {
+
+	        $id_category = (int)$entityContext->id_entity;
+            if ($id_category <= 0) {
+                return '';
+            }
 	        $id_shop = $this->context->shop->id_shop;
 	        $id_lang = $this->context->language->id_lang;
 
