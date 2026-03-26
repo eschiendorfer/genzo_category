@@ -196,9 +196,9 @@ class Genzo_Category extends Module
 
         $entityContext = \EntityResolver::getEntityByContext();
 
-	    if ($entityContext->entity_type == EntityTypeEnum::CATEGORY->value) {
+	    if ($entityContext->context_entity_type == EntityTypeEnum::CATEGORY->value) {
 
-	        $id_category = (int)$entityContext->id_entity;
+	        $id_category = (int)$entityContext->context_id_entity;
             if ($id_category <= 0) {
                 return '';
             }
