@@ -337,7 +337,7 @@ class Genzo_Category extends Module
     private function checkShortcode($content) {
        if (file_exists(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes.php')) {
             include_once(_PS_MODULE_DIR_ . 'genzo_shortcodes/genzo_shortcodes.php');
-            $content = Genzo_Shortcodes::executeShortcodes($content);
+            $content = Genzo_Shortcodes::executeShortcodes((string)$content);
         }
         return $content;
     }
