@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Copyright (C) 2022 Emanuel Schiendorfer
+ * Copyright (C) 2026 Emanuel Schiendorfer
  *
  * @author    Emanuel Schiendorfer <https://github.com/eschiendorfer>
- * @copyright 2022 Emanuel Schiendorfer
+ * @copyright 2026 Emanuel Schiendorfer
  */
 
 namespace GenzoCategoryModule;
